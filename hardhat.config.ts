@@ -16,7 +16,7 @@ const config: HardhatUserConfig = {
   networks: {
     telos_testnet: {
       url: "https://testnet.telos.net/evm",
-      accounts: [process.env.TELOS_TESTNET_PRIVATE_KEY],
+      accounts: [process.env.TELOS_TESTNET_PRIVATE_KEY as string],
       chainId: 41,
     },
   },
