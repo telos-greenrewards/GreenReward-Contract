@@ -1,60 +1,64 @@
 import { ethers } from "hardhat";
 
 async function main() {
-const [deployer, member1, member2, member3, member4, member5] = await ethers.getSigners();
+// const [deployer, member1, member2, member3, member4, member5] = await ethers.getSigners();
 
 
-  //deploy green token
-  const GreenToken = await ethers.deployContract("GreenToken");
+//   //deploy green token
+//   const GreenToken = await ethers.deployContract("GreenToken");
 
-  await GreenToken.waitForDeployment();
-  console.log(`GreenToken  deployed to ${GreenToken.target}`);
+//   await GreenToken.waitForDeployment();
+//   console.log(`GreenToken  deployed to ${GreenToken.target}`);
 
 
-    //deploy green reward
-    const GreenReward = await ethers.deployContract("GreenReward", [GreenToken.target, deployer]);
+//     //deploy green reward
+//     const GreenReward = await ethers.deployContract("GreenReward", [GreenToken.target, deployer]);
 
-    await GreenReward.waitForDeployment();
+//     await GreenReward.waitForDeployment();
   
-    console.log(`GreenReward  deployed to ${GreenReward.target}`);
+//     console.log(`GreenReward  deployed to ${GreenReward.target}`);
 
-  //deploy green minting
-  const GreenMinting = await ethers.deployContract("GreenMinting", [GreenToken.target]);
+//   //deploy green minting
+//   const GreenMinting = await ethers.deployContract("GreenMinting", [GreenToken.target]);
 
-  await GreenMinting.waitForDeployment();
+//   await GreenMinting.waitForDeployment();
 
-  console.log(`GreenMinting  deployed to ${GreenMinting.target}`);
+//   console.log(`GreenMinting  deployed to ${GreenMinting.target}`);
 
+//get signer
+const [deployer, member1, member2] = await ethers.getSigners();
 
-
-  ///Interact
-  const GreenTokenContract = await ethers.getContractAt("GreenToken", GreenToken.target);
-  const GreenRewardContract = await ethers.getContractAt("GreenReward", GreenReward.target);
-  const GreenMintingContract = await ethers.getContractAt("GreenMinting", GreenMinting.target);
+console.log(deployer.address, member1.address, member2.address)
 
 
-  //Green Token Contract
+
+
+
+  //Interact
+  const GreenTokenContract = await ethers.getContractAt("GreenToken", "0x3D98a2f7dFdAB3c09A28e95f5e49f26be87f7f95");
+  const GreenRewardContract = await ethers.getContractAt("GreenReward", "0x25d3195984A693886103312eA3FA53D738c951B7");
+  const GreenMintingContract = await ethers.getContractAt("GreenMinting", "0x951fAa8B5E040DdC3f0489D00CF1E66be2355b25");
+
+
+  // Green Token Contract
   // transferownership
-    const transferOwnership = await GreenTokenContract.transferOwnership(GreenRewardContract.target);
+    const transferOwnership = await GreenTokenContract.transferOwnership("0x25d3195984A693886103312eA3FA53D738c951B7");
         await transferOwnership.wait();
         console.log("Ownership transferred", transferOwnership.hash);
-
-
-
-
 
 
   ////////
   // create Profile
   const profile = await GreenRewardContract.connect(member1).createProfile("Isaac", "Dubai", "isaaac@mail.com");
-                  await GreenRewardContract.connect(member4).createProfile("member4", "Uk", "member4@mail.com");
+                  await GreenRewardContract.connect(deployer).createProfile("philip", "Nigeria", "philip@mail.com");
     await profile.wait();
     console.log("Profile created", profile.hash);
 
  //list Product
  const price = ethers.parseEther("2")
- const listProduct = await GreenRewardContract.connect(member1).listProduct("Product 1", "product image", "Product 1 description", price, 100);
-                     await GreenRewardContract.connect(member1).listProduct("Product 2", "product2 image", "Product 2 description", 4, 50);
+ const price2 = ethers.parseEther("4")
+ const listProduct = await GreenRewardContract.connect(member1).listProduct("Glass", "QmVhwmF7aHuwN5ghmPsSzR2pXGgPYuy6YqX6ebBMQX4fKB", "Product of different glasses of differnt sizes", price, 100);
+                     await GreenRewardContract.connect(member1).listProduct("plastic bottle", "QmUSiYHYbMXaJYJ2viFAGUiNMPufunpe67EUFBVss9X5wX", "plastic bottles compressed together of different sizes, sold per stack", 4, 50);
     await listProduct.wait();
     console.log("Product listed", listProduct.hash);
 
